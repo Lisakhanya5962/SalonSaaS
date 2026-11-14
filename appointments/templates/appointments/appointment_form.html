@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    {{ page_title }} | {{ business.name }}
+</title>
+
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+>
+
+<style>
+
+    body {
+        background-color: #f5f7fb;
+    }
+
+    .booking-card {
+        max-width: 950px;
+        margin: 0 auto;
+        border: none;
+        border-radius: 14px;
+    }
+
+    .booking-header {
+        border-bottom: 1px solid #eee;
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+
+    .required {
+        color: #dc3545;
+    }
+
+</style>
+
+
+</head>
+
+<body>
+
+<div class="container py-5">
+
+
+<div class="booking-card card shadow-sm">
+
+    <!-- Header -->
+    <div class="booking-header card-body p-4 p-md-5">
+
+        <a
+            href="{% url 'dashboard' %}"
+            class="text-decoration-none"
+        >
+            ← Back to Dashboard
+        </a>
+
+        <div class="mt-4">
+
+            <h1 class="h3 mb-1">
+                {{ page_title }}
+            </h1>
+
+            <p class="text-muted mb-0">
+
+                Create or update an appointment for
+                <strong>{{ business.name }}</strong>.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- Form -->
+    <div class="card-body p-4 p-md-5">
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div
+                    class="alert alert-{{ message.tags }}"
+                    role="alert"
+                >
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        {% if form.non_field_errors %}
+
+            <div class="alert alert-danger">
+
+                {% for error in form.non_field_errors %}
+
+                    <div>
+                        {{ error }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <form
+            method="post"
+            novalidate
+        >
+
+            {% csrf_token %}
+
+
+            <!-- Customer -->
+            <div class="mb-4">
+
+                <label
+                    for="{{ form.customer.id_for_label }}"
+                    class="form-label"
+                >
+
+                    Customer
+                    <span class="required">*</span>
+
+                </label>
+
+                {{ form.customer }}
+
+                {% for error in form.customer.errors %}
+
+                    <div class="text-danger small mt-1">
+                        {{ error }}
+                    </div>
+
+                {% endfor %}
+
+                <div class="form-text">
+                    Select the customer making the booking.
+                </div>
+
+            </div>
+
+
+            <!-- Service -->
+            <div class="mb-4">
+
+                <label
+                    for="{{ form.service.id_for_label }}"
+                    class="form-label"
+                >
+
+                    Service
+                    <span class="required">*</span>
+
+                </label>
+
+                {{ form.service }}
+
+                {% for error in form.service.errors %}
+
+                    <div class="text-danger small mt-1">
+                        {{ error }}
+                    </div>
+
+                {% endfor %}
+
+                <div class="form-text">
+                    The service price will automatically be used
+                    for the appointment.
+                </div>
+
+            </div>
+
+
+            <!-- Staff -->
+            <div class="mb-4">
+
+                <label
+                    for="{{ form.staff.id_for_label }}"
+                    class="form-label"
+                >
+
+                    Staff Member
+                    <span class="required">*</span>
+
+                </label>
+
+                {{ form.staff }}
+
+                {% for error in form.staff.errors %}
+
+                    <div class="text-danger small mt-1">
+                        {{ error }}
+                    </div>
+
+                {% endfor %}
+
+                <div class="form-text">
+                    Only active staff members belonging to this
+                    business can be selected.
+                </div>
+
+            </div>
+
+
+            <!-- Date and Time -->
+            <div class="row">
+
+                <!-- Date -->
+                <div class="col-md-6 mb-4">
+
+                    <label
+                        for="{{ form.appointment_date.id_for_label }}"
+                        class="form-label"
+                    >
+
+                        Appointment Date
+                        <span class="required">*</span>
+
+                    </label>
+
+                    {{ form.appointment_date }}
+
+                    {% for error in form.appointment_date.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- Start Time -->
+                <div class="col-md-6 mb-4">
+
+                    <label
+                        for="{{ form.start_time.id_for_label }}"
+                        class="form-label"
+                    >
+
+                        Start Time
+                        <span class="required">*</span>
+
+                    </label>
+
+                    {{ form.start_time }}
+
+                    {% for error in form.start_time.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Notes -->
+            <div class="mb-4">
+
+                <label
+                    for="{{ form.notes.id_for_label }}"
+                    class="form-label"
+                >
+
+                    Notes
+
+                </label>
+
+                {{ form.notes }}
+
+                {% for error in form.notes.errors %}
+
+                    <div class="text-danger small mt-1">
+                        {{ error }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- Appointment Information -->
+            <div class="alert alert-info">
+
+                <strong>Appointment information</strong>
+
+                <ul class="mb-0 mt-2">
+
+                    <li>
+                        The appointment price is taken
+                        automatically from the selected service.
+                    </li>
+
+                    <li>
+                        The appointment duration is based on
+                        the service duration.
+                    </li>
+
+                    <li>
+                        The appointment will initially be marked
+                        as <strong>Pending</strong>.
+                    </li>
+
+                    <li>
+                        The staff member must be available during
+                        the selected appointment time.
+                    </li>
+
+                    <li>
+                        Appointments cannot be booked in the past.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end gap-2 mt-4">
+
+                <a
+                    href="{% url 'appointment_list' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    {{ submit_text }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+</body>
+
+</html>

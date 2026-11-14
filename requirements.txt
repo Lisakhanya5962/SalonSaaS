@@ -1,0 +1,4 @@
+
+Django==5.2.16
+Pillow==13.0.0
+tzdata==2026.6

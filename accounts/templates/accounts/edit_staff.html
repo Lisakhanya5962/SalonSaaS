@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Staff | SalonSaaS{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+                <h1 class="mb-1">Edit Staff</h1>
+
+                <p class="text-muted mb-0">
+                    Update employee information for
+                    <strong>{{ business.name }}</strong>
+                </p>
+            </div>
+
+            <a
+                href="{% url 'staff_list' %}"
+                class="btn btn-outline-secondary"
+            >
+                Back to Employees
+            </a>
+
+        </div>
+
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div
+                    class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                    role="alert"
+                >
+
+                    {{ message }}
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                    ></button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        {% if form.non_field_errors %}
+
+            <div class="alert alert-danger">
+
+                {{ form.non_field_errors }}
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="card shadow-sm">
+
+            <div class="card-body p-4">
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+
+                    <!-- FIRST NAME -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="first_name"
+                            class="form-label"
+                        >
+                            First Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="first_name"
+                            name="first_name"
+                            class="form-control"
+                            value="{{ staff_membership.user.first_name }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- LAST NAME -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="last_name"
+                            class="form-label"
+                        >
+                            Last Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="last_name"
+                            name="last_name"
+                            class="form-control"
+                            value="{{ staff_membership.user.last_name }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="email"
+                            class="form-label"
+                        >
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control"
+                            value="{{ staff_membership.user.email }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- ROLE -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="role"
+                            class="form-label"
+                        >
+                            Role
+                        </label>
+
+                        <select
+                            id="role"
+                            name="role"
+                            class="form-select"
+                            required
+                        >
+
+                            {% for role in roles %}
+
+                                <option
+                                    value="{{ role }}"
+                                    {% if staff_membership.role == role %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ role|title }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        <div class="form-text">
+                            Managers can assign staff roles, but cannot
+                            create or assign the Owner role.
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="d-flex gap-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Save Changes
+                        </button>
+
+                        <a
+                            href="{% url 'staff_list' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

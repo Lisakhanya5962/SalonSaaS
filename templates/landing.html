@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}
+Salon SaaS | Salon Management Made Simple
+{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================= -->
+<!-- HERO -->
+<!-- ========================================================= -->
+
+<section class="py-5">
+    <div class="container py-5">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-7">
+
+                <span class="badge bg-dark mb-3">
+                    SALON MANAGEMENT PLATFORM
+                </span>
+
+                <h1 class="display-3 fw-bold mb-4">
+                    Manage your salon.
+                    <br>
+                    <span class="text-primary">
+                        Grow your business.
+                    </span>
+                </h1>
+
+                <p class="lead text-muted mb-4">
+                    Salon SaaS helps salons, barbershops and beauty
+                    businesses manage appointments, customers, staff,
+                    services and daily operations in one simple platform.
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    <a
+                        href="{% url 'login' %}"
+                        class="btn btn-dark btn-lg px-4"
+                    >
+                        Get Started
+                    </a>
+
+                    <a
+                        href="{% url 'customer_login' %}"
+                        class="btn btn-outline-dark btn-lg px-4"
+                    >
+                        Customer Login
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-5 mt-5 mt-lg-0">
+
+                <div class="card shadow-lg p-4">
+
+                    <h4 class="fw-bold mb-4">
+                        Everything in one place
+                    </h4>
+
+                    <div class="d-flex mb-3">
+                        <div class="me-3 fs-4">📅</div>
+                        <div>
+                            <h6 class="fw-bold mb-1">
+                                Appointments
+                            </h6>
+                            <p class="text-muted mb-0">
+                                Schedule and manage appointments easily.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-3">
+                        <div class="me-3 fs-4">👥</div>
+                        <div>
+                            <h6 class="fw-bold mb-1">
+                                Customers
+                            </h6>
+                            <p class="text-muted mb-0">
+                                Keep your customer information organised.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-3">
+                        <div class="me-3 fs-4">✂️</div>
+                        <div>
+                            <h6 class="fw-bold mb-1">
+                                Services
+                            </h6>
+                            <p class="text-muted mb-0">
+                                Manage your salon services and prices.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="me-3 fs-4">🔔</div>
+                        <div>
+                            <h6 class="fw-bold mb-1">
+                                Notifications
+                            </h6>
+                            <p class="text-muted mb-0">
+                                Stay informed about important appointments.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- FEATURES -->
+<!-- ========================================================= -->
+
+<section class="py-5 bg-white">
+
+    <div class="container py-5">
+
+        <div class="text-center mb-5">
+
+            <h2 class="fw-bold">
+                Everything your salon needs
+            </h2>
+
+            <p class="text-muted">
+                Simple tools designed to make your daily operations easier.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+
+                <div class="card h-100 shadow-sm p-4">
+
+                    <div class="fs-1 mb-3">
+                        📅
+                    </div>
+
+                    <h4 class="fw-bold">
+                        Appointment Management
+                    </h4>
+
+                    <p class="text-muted">
+                        Book, confirm, reschedule and cancel appointments
+                        while keeping your calendar organised.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="card h-100 shadow-sm p-4">
+
+                    <div class="fs-1 mb-3">
+                        👤
+                    </div>
+
+                    <h4 class="fw-bold">
+                        Customer Management
+                    </h4>
+
+                    <p class="text-muted">
+                        Keep customer details and appointment history
+                        organised and accessible.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="card h-100 shadow-sm p-4">
+
+                    <div class="fs-1 mb-3">
+                        👨‍💼
+                    </div>
+
+                    <h4 class="fw-bold">
+                        Staff Management
+                    </h4>
+
+                    <p class="text-muted">
+                        Manage staff members, roles and availability
+                        from one central system.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- CALL TO ACTION -->
+<!-- ========================================================= -->
+
+<section class="py-5">
+
+    <div class="container py-5">
+
+        <div class="bg-dark text-white rounded-4 p-5 text-center">
+
+            <h2 class="fw-bold mb-3">
+                Ready to simplify your salon?
+            </h2>
+
+            <p class="lead mb-4">
+                Manage your business and appointments with Salon SaaS.
+            </p>
+
+            <a
+                href="{% url 'login' %}"
+                class="btn btn-light btn-lg px-4"
+            >
+                Login to Salon SaaS
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

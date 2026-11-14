@@ -1,0 +1,239 @@
+﻿{% extends "base.html" %}
+
+{% block title %}
+Appointment Details | {{ business.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+
+        <h1>
+            Appointment Details
+        </h1>
+
+        <p class="text-muted">
+            Review your appointment information below.
+        </p>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-start mb-4">
+
+                <div>
+
+                    <h3 class="mb-1">
+                        {{ appointment.service.name }}
+                    </h3>
+
+                    <p class="text-muted mb-0">
+                        {{ business.name }}
+                    </p>
+
+                </div>
+
+
+                {% if appointment.status == "PENDING" %}
+
+                    <span class="badge bg-warning text-dark">
+                        Pending
+                    </span>
+
+                {% elif appointment.status == "CONFIRMED" %}
+
+                    <span class="badge bg-primary">
+                        Confirmed
+                    </span>
+
+                {% elif appointment.status == "COMPLETED" %}
+
+                    <span class="badge bg-success">
+                        Completed
+                    </span>
+
+                {% elif appointment.status == "CANCELLED" %}
+
+                    <span class="badge bg-danger">
+                        Cancelled
+                    </span>
+
+                {% elif appointment.status == "NO_SHOW" %}
+
+                    <span class="badge bg-secondary">
+                        No Show
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="row g-4">
+
+
+                <div class="col-md-6">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Date
+                        </small>
+
+                        <h5 class="mt-1 mb-0">
+
+                            {{ appointment.appointment_date|date:"l, d F Y" }}
+
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Time
+                        </small>
+
+                        <h5 class="mt-1 mb-0">
+
+                            {{ appointment.start_time|time:"H:i" }}
+
+                            -
+
+                            {{ appointment.end_time|time:"H:i" }}
+
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Staff Member
+                        </small>
+
+                        <h5 class="mt-1 mb-0">
+
+                            {% if appointment.staff.get_full_name %}
+
+                                {{ appointment.staff.get_full_name }}
+
+                            {% else %}
+
+                                {{ appointment.staff.username }}
+
+                            {% endif %}
+
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Price
+                        </small>
+
+                        <h5 class="mt-1 mb-0">
+
+                            R{{ appointment.price }}
+
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            {% if appointment.notes %}
+
+                <div class="alert alert-light border mt-4">
+
+                    <strong>
+                        Notes
+                    </strong>
+
+                    <div class="mt-1">
+                        {{ appointment.notes }}
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <hr class="my-4">
+
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                <a
+                    href="{% url 'customer_dashboard' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Back to Dashboard
+                </a>
+
+
+                {% if appointment.status == "PENDING" or appointment.status == "CONFIRMED" %}
+
+                   <form
+    method="post"
+    action="{% url 'customer_appointment_cancel' appointment.id %}"
+    class="d-inline"
+    onsubmit="return confirm('Are you sure you want to cancel this appointment?');"
+>
+    {% csrf_token %}
+
+    <button
+        type="submit"
+        class="btn btn-outline-danger"
+    >
+        Cancel Appointment
+    </button>
+</form>
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary"
+                        disabled
+                    >
+                        Reschedule
+                    </button>
+
+                {% endif %}
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Availability{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Staff Availability</h1>
+        <p class="text-muted mb-0">
+            Manage staff working days and working hours.
+        </p>
+    </div>
+
+    <a href="{% url 'availability_create' %}" class="btn btn-primary">
+        + Add Availability
+    </a>
+</div>
+
+
+<!-- Filters -->
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <form method="get">
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-5">
+
+                    <label for="staff" class="form-label">
+                        Staff Member
+                    </label>
+
+                    <select
+                        name="staff"
+                        id="staff"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Staff
+                        </option>
+
+                        {% for membership in staff_members %}
+
+                            <option
+                                value="{{ membership.user.id }}"
+                                {% if selected_staff|stringformat:"s" == membership.user.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ membership.user.get_full_name|default:membership.user.username }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <label for="day" class="form-label">
+                        Day
+                    </label>
+
+                    <select
+                        name="day"
+                        id="day"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Days
+                        </option>
+
+                        {% for value, label in days %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if selected_day|stringformat:"s" == value|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-3 d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Filter
+                    </button>
+
+                    <a
+                        href="{% url 'availability_list' %}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Clear
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+<!-- Availability Table -->
+
+<div class="card shadow-sm">
+
+    <div class="card-header bg-white">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+                Staff Schedules
+            </h5>
+
+            <span class="text-muted">
+                {{ availability|length }} schedule{{ availability|length|pluralize }}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="card-body p-0">
+
+        {% if availability %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th class="px-4">
+                                Staff Member
+                            </th>
+
+                            <th>
+                                Day
+                            </th>
+
+                            <th>
+                                Start Time
+                            </th>
+
+                            <th>
+                                End Time
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th class="text-end px-4">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in availability %}
+
+                            <tr>
+
+                                <td class="px-4">
+
+                                    <strong>
+                                        {{ item.staff.get_full_name|default:item.staff.username }}
+                                    </strong>
+
+                                    {% if item.staff.get_full_name %}
+
+                                        <div class="small text-muted">
+                                            @{{ item.staff.username }}
+                                        </div>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+                                    {{ item.get_day_of_week_display }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if item.is_working %}
+
+                                        {{ item.start_time|time:"H:i" }}
+
+                                    {% else %}
+
+                                        —
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if item.is_working %}
+
+                                        {{ item.end_time|time:"H:i" }}
+
+                                    {% else %}
+
+                                        —
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if item.is_working %}
+
+                                        <span class="badge bg-success">
+                                            Working
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+                                            Day Off
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td class="text-end px-4">
+
+                                    <div class="d-inline-flex gap-2">
+
+                                        <a
+                                            href="{% url 'availability_edit' item.id %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                        >
+                                            Edit
+                                        </a>
+
+                                        <a
+                                            href="{% url 'availability_delete' item.id %}"
+                                            class="btn btn-sm btn-outline-danger"
+                                        >
+                                            Delete
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-5 px-3">
+
+                <h5 class="mb-2">
+                    No staff availability found
+                </h5>
+
+                <p class="text-muted mb-4">
+                    No schedules match your current filters.
+                </p>
+
+                <a
+                    href="{% url 'availability_create' %}"
+                    class="btn btn-primary"
+                >
+                    Add Staff Availability
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

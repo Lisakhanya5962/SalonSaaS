@@ -1,0 +1,711 @@
+﻿{% extends "base.html" %}
+
+{% block title %}
+Customer Dashboard | {{ business.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- ===================================================== -->
+    <!-- WELCOME -->
+    <!-- ===================================================== -->
+
+    <div class="card welcome-card shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+
+                <div>
+
+                    <h1 class="mb-2">
+                        Welcome, {{ customer.first_name }}!
+                    </h1>
+
+                    <p class="text-muted mb-0">
+                        Manage your appointments at
+                        <strong>{{ business.name }}</strong>.
+                    </p>
+
+                </div>
+
+                <div class="mt-3 mt-md-0">
+
+                    <a
+                        href="{% url 'customer_booking' %}"
+                        class="btn btn-primary"
+                    >
+                        + Book Appointment
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- STATISTICS -->
+    <!-- ===================================================== -->
+
+    <div class="row g-3 mb-5">
+
+        <div class="col-6 col-md-4 col-lg">
+
+            <div class="card stat-card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Total
+                    </p>
+
+                    <div class="stat-number">
+                        {{ my_appointment_count }}
+                    </div>
+
+                    <small class="text-muted">
+                        Appointments
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-6 col-md-4 col-lg">
+
+            <div class="card stat-card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Pending
+                    </p>
+
+                    <div class="stat-number text-warning">
+                        {{ pending_count }}
+                    </div>
+
+                    <small class="text-muted">
+                        Awaiting confirmation
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-6 col-md-4 col-lg">
+
+            <div class="card stat-card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Confirmed
+                    </p>
+
+                    <div class="stat-number text-primary">
+                        {{ confirmed_count }}
+                    </div>
+
+                    <small class="text-muted">
+                        Upcoming
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-6 col-md-4 col-lg">
+
+            <div class="card stat-card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Completed
+                    </p>
+
+                    <div class="stat-number text-success">
+                        {{ completed_count }}
+                    </div>
+
+                    <small class="text-muted">
+                        Finished
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-6 col-md-4 col-lg">
+
+            <div class="card stat-card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Cancelled
+                    </p>
+
+                    <div class="stat-number text-danger">
+                        {{ cancelled_count }}
+                    </div>
+
+                    <small class="text-muted">
+                        Cancelled
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- UPCOMING APPOINTMENTS -->
+    <!-- ===================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div>
+
+            <h3 class="mb-1">
+                Upcoming Appointments
+            </h3>
+
+            <p class="text-muted mb-0">
+                Your next appointments at {{ business.name }}.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- MY CALENDAR -->
+    <!-- ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body p-4">
+
+                    <h5>
+                        My Calendar
+                    </h5>
+
+                    <p class="text-muted">
+                        View your appointments in one place,
+                        including dates, times, staff and status.
+                    </p>
+
+                    <a
+                        href="{% url 'customer_calendar' %}"
+                        class="btn btn-outline-primary"
+                    >
+                        View Calendar
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% if upcoming_appointments %}
+
+        <div class="row g-4 mb-5">
+
+            {% for appointment in upcoming_appointments %}
+
+                <div class="col-md-6">
+
+                    <div class="card appointment-card shadow-sm h-100">
+
+                        <div class="card-body p-4">
+
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+
+                                <div>
+
+                                    <h5 class="mb-1">
+                                        {{ appointment.service.name }}
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        Appointment
+                                    </small>
+
+                                </div>
+
+
+                                {% if appointment.status == "PENDING" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+
+                                {% elif appointment.status == "CONFIRMED" %}
+
+                                    <span class="badge bg-primary">
+                                        Confirmed
+                                    </span>
+
+                                {% elif appointment.status == "COMPLETED" %}
+
+                                    <span class="badge bg-success">
+                                        Completed
+                                    </span>
+
+                                {% elif appointment.status == "CANCELLED" %}
+
+                                    <span class="badge bg-danger">
+                                        Cancelled
+                                    </span>
+
+                                {% elif appointment.status == "NO_SHOW" %}
+
+                                    <span class="badge bg-secondary">
+                                        No Show
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="mb-2">
+
+                                <strong>
+                                    Date:
+                                </strong>
+
+                                {{ appointment.appointment_date|date:"l, d F Y" }}
+
+                            </div>
+
+
+                            <div class="mb-2">
+
+                                <strong>
+                                    Time:
+                                </strong>
+
+                                {{ appointment.start_time|time:"H:i" }}
+                                -
+                                {{ appointment.end_time|time:"H:i" }}
+
+                            </div>
+
+
+                            <div class="mb-2">
+
+                                <strong>
+                                    Staff:
+                                </strong>
+
+                                {% if appointment.staff.get_full_name %}
+
+                                    {{ appointment.staff.get_full_name }}
+
+                                {% else %}
+
+                                    {{ appointment.staff.username }}
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <strong>
+                                    Price:
+                                </strong>
+
+                                R{{ appointment.price }}
+
+                            </div>
+
+
+                            {% if appointment.notes %}
+
+                                <div class="alert alert-light border mb-3">
+
+                                    <strong>
+                                        Notes:
+                                    </strong>
+
+                                    {{ appointment.notes }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="card shadow-sm border-0 mb-5">
+
+            <div class="card-body empty-state">
+
+                <h5>
+                    No upcoming appointments
+                </h5>
+
+                <p class="text-muted">
+                    You currently don't have any upcoming appointments.
+                </p>
+
+                <a
+                    href="{% url 'customer_booking' %}"
+                    class="btn btn-primary"
+                >
+                    Book Your First Appointment
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ===================================================== -->
+    <!-- MY APPOINTMENTS -->
+    <!-- ===================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div>
+
+            <h3 class="mb-1">
+                My Appointments
+            </h3>
+
+            <p class="text-muted mb-0">
+                Your appointment history.
+            </p>
+
+            <small class="text-primary">
+                Click an appointment to view or manage it.
+            </small>
+
+        </div>
+
+    </div>
+
+
+    {% if my_appointments %}
+
+        <div class="card shadow-sm border-0 mb-5">
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="px-3">
+                                    Date
+                                </th>
+
+                                <th>
+                                    Service
+                                </th>
+
+                                <th>
+                                    Staff
+                                </th>
+
+                                <th>
+                                    Time
+                                </th>
+
+                                <th>
+                                    Price
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for appointment in my_appointments %}
+
+                                <tr
+                                    class="appointment-row"
+                                    data-url="{% url 'customer_appointment_detail' appointment.id %}"
+                                    onclick="window.location.href=this.dataset.url"
+                                    title="Click to manage this appointment"
+                                    style="cursor: pointer;"
+                                >
+
+                                    <td class="px-3">
+                                        {{ appointment.appointment_date|date:"d M Y" }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ appointment.service.name }}
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if appointment.staff.get_full_name %}
+
+                                            {{ appointment.staff.get_full_name }}
+
+                                        {% else %}
+
+                                            {{ appointment.staff.username }}
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ appointment.start_time|time:"H:i" }}
+                                        -
+                                        {{ appointment.end_time|time:"H:i" }}
+
+                                    </td>
+
+
+                                    <td>
+                                        R{{ appointment.price }}
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if appointment.status == "PENDING" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Pending
+                                            </span>
+
+                                        {% elif appointment.status == "CONFIRMED" %}
+
+                                            <span class="badge bg-primary">
+                                                Confirmed
+                                            </span>
+
+                                        {% elif appointment.status == "COMPLETED" %}
+
+                                            <span class="badge bg-success">
+                                                Completed
+                                            </span>
+
+                                        {% elif appointment.status == "CANCELLED" %}
+
+                                            <span class="badge bg-danger">
+                                                Cancelled
+                                            </span>
+
+                                        {% elif appointment.status == "NO_SHOW" %}
+
+                                            <span class="badge bg-secondary">
+                                                No Show
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+        <div class="card shadow-sm border-0 mb-5">
+
+            <div class="card-body empty-state">
+
+                <p class="text-muted mb-0">
+                    You don't have any appointments yet.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ===================================================== -->
+    <!-- BUSINESS INFORMATION -->
+    <!-- ===================================================== -->
+
+    <div class="card shadow-sm border-0 mb-5">
+
+        <div class="card-body p-4">
+
+            <h4 class="mb-4">
+                Your Business
+            </h4>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <p class="mb-1 text-muted">
+                        Salon / Barbershop
+                    </p>
+
+                    <strong>
+                        {{ business.name }}
+                    </strong>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <p class="mb-1 text-muted">
+                        Customer
+                    </p>
+
+                    <strong>
+                        {{ customer.full_name }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- QUICK ACTIONS -->
+    <!-- ===================================================== -->
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body p-4">
+
+                    <h5>
+                        Book Another Appointment
+                    </h5>
+
+                    <p class="text-muted">
+                        Choose another service, staff member,
+                        date and time.
+                    </p>
+
+                    <a
+                        href="{% url 'customer_booking' %}"
+                        class="btn btn-primary"
+                    >
+                        Book Appointment
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body p-4">
+
+                    <h5>
+                        My Profile
+                    </h5>
+
+                    <p class="text-muted">
+                        View your customer information and account details.
+                    </p>
+
+                    <a
+                        href="{% url 'customer_profile' %}"
+                        class="btn btn-outline-primary"
+                    >
+                        Manage Profile
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

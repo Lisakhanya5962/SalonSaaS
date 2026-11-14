@@ -1,0 +1,56 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+secrets.json
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# User uploads and private data
+media/
+
+# IDE
+.vscode/
+.idea/
+
+# Operating system
+.DS_Store
+Thumbs.db
+
+# Backups
+backups/
+*.bak
+*.backup
+*.backup.html
+*.before_customer_login_fix.py
+
+# Old template backups
+templates_backup_before_base/
+templates/base.backup.html
+templates/base.before_customer_notifications.html
+templates/base.before_layout_fix.html
+templates/base.error-backup.html
+templates/base_backup.html
+
+# Diagnostic and temporary output
+appointment_detail_output.txt
+
+# Pre-cleanup template backups
+*.before_cleanup.html

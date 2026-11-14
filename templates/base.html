@@ -1,0 +1,922 @@
+﻿{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}SalonSaaS{% endblock %}
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        :root {
+            --sidebar-bg: #111827;
+            --sidebar-hover: #1f2937;
+            --sidebar-text: #d1d5db;
+            --sidebar-muted: #9ca3af;
+            --primary: #4f46e5;
+            --page-bg: #f5f7fb;
+            --border: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--page-bg);
+            color: #111827;
+            min-height: 100vh;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* =====================================================
+           STAFF APPLICATION
+        ===================================================== */
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .app-sidebar {
+            width: 260px;
+            min-width: 260px;
+            min-height: 100vh;
+            background: var(--sidebar-bg);
+            color: white;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-brand a {
+            color: white;
+        }
+
+        .sidebar-brand-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+        }
+
+        .sidebar-brand-subtitle {
+            color: var(--sidebar-muted);
+            font-size: 0.75rem;
+            margin-top: 3px;
+        }
+
+        .sidebar-nav {
+            padding: 16px 12px 20px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section-title {
+            color: #6b7280;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0 12px 8px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            color: var(--sidebar-text);
+            padding: 10px 12px;
+            margin-bottom: 3px;
+            border-radius: 9px;
+            font-size: 0.9rem;
+            transition: all 0.15s ease;
+        }
+
+        .sidebar-link:hover {
+            background: var(--sidebar-hover);
+            color: white;
+        }
+
+        .sidebar-link.active {
+            background: #374151;
+            color: white;
+            font-weight: 600;
+        }
+
+        .sidebar-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .sidebar-divider {
+            border-color: rgba(255,255,255,0.08);
+            margin: 10px 12px 18px;
+        }
+
+        .sidebar-user {
+            margin: 0 12px 12px;
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .sidebar-user-name {
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .sidebar-user-role {
+            color: var(--sidebar-muted);
+            font-size: 0.72rem;
+        }
+
+        .app-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .app-content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .app-topbar {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .topbar-business {
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .topbar-user {
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .app-footer {
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 18px 30px;
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand {
+            font-weight: 700;
+            color: #374151;
+        }
+
+        /* =====================================================
+           CUSTOMER
+        ===================================================== */
+
+        .customer-navbar {
+            background: var(--sidebar-bg);
+        }
+
+        .customer-navbar .navbar-brand {
+            font-weight: 700;
+        }
+
+        /* =====================================================
+           GENERAL
+        ===================================================== */
+
+        .dashboard-card,
+        .stat-card,
+        .profile-card,
+        .appointment-card,
+        .calendar-card {
+            border: none;
+            border-radius: 14px;
+        }
+
+        .stat-value,
+        .stat-number {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        .small-muted {
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .appointment-row {
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .appointment-row:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 991px) {
+
+            .app-sidebar {
+                width: 220px;
+                min-width: 220px;
+            }
+
+            .app-content {
+                padding: 20px;
+            }
+
+            .app-topbar {
+                padding: 0 20px;
+            }
+
+        }
+
+        @media (max-width: 767px) {
+
+            .app-layout {
+                display: block;
+            }
+
+            .app-sidebar {
+                position: relative;
+                width: 100%;
+                min-width: 100%;
+                height: auto;
+                min-height: auto;
+            }
+
+            .app-content {
+                padding: 15px;
+            }
+
+            .app-topbar {
+                padding: 0 15px;
+            }
+
+            .app-footer {
+                padding: 15px;
+            }
+
+        }
+
+    </style>
+
+    {% block extra_css %}{% endblock %}
+
+</head>
+
+<body>
+
+
+{% if request.user.is_authenticated and "/customer/" not in request.path %}
+
+<!-- =========================================================
+     STAFF APPLICATION
+========================================================= -->
+
+<div class="app-layout">
+
+    <aside class="app-sidebar">
+
+        <div class="sidebar-brand">
+
+            <a href="{% url 'home' %}">
+
+                <div class="sidebar-brand-title">
+                    SalonSaaS
+                </div>
+
+                <div class="sidebar-brand-subtitle">
+                    Salon Management System
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <!-- OVERVIEW -->
+
+            <div class="sidebar-section">
+
+                <div class="sidebar-section-title">
+                    Overview
+                </div>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="sidebar-link"
+                >
+                    <span class="sidebar-icon">⌂</span>
+                    Landing Page
+                </a>
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                >
+                    <span class="sidebar-icon">▦</span>
+                    Dashboard
+                </a>
+
+            </div>
+
+
+            <!-- BOOKINGS -->
+
+            <div class="sidebar-section">
+
+                <div class="sidebar-section-title">
+                    Bookings
+                </div>
+
+                <a
+                    href="{% url 'appointment_list' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'appointment_list' %}active{% endif %}"
+                >
+                    <span class="sidebar-icon">▣</span>
+                    Appointments
+                </a>
+
+                <a
+                    href="{% url 'appointment_calendar' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'appointment_calendar' %}active{% endif %}"
+                >
+                    <span class="sidebar-icon">▦</span>
+                    Calendar
+                </a>
+
+                <a
+                    href="{% url 'appointment_create' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'appointment_create' %}active{% endif %}"
+                >
+                    <span class="sidebar-icon">+</span>
+                    New Appointment
+                </a>
+
+            </div>
+
+
+            <!-- PEOPLE -->
+
+            <div class="sidebar-section">
+
+                <div class="sidebar-section-title">
+                    People
+                </div>
+
+                <a
+                    href="{% url 'customer_list' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'customer_list' %}active{% endif %}"
+                >
+                    <span class="sidebar-icon">♙</span>
+                    Customers
+                </a>
+
+                <a
+                    href="{% url 'staff_list' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'staff_list' %}active{% endif %}"
+                >
+                    <span class="sidebar-icon">♟</span>
+                    Employees
+                </a>
+
+            </div>
+
+
+            <!-- BUSINESS -->
+
+            <div class="sidebar-section">
+
+                <div class="sidebar-section-title">
+                    Business
+                </div>
+
+                <a
+                    href="{% url 'service_list' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'service_list' %}active{% endif %}"
+                >
+                    <span class="sidebar-icon">✦</span>
+                    Services
+                </a>
+
+                <a
+                    href="{% url 'availability_list' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'availability_list' %}active{% endif %}"
+                >
+                    <span class="sidebar-icon">◷</span>
+                    Staff Availability
+                </a>
+
+            </div>
+
+
+            <!-- OPERATIONS -->
+
+            <div class="sidebar-section">
+
+                <div class="sidebar-section-title">
+                    Operations
+                </div>
+
+                <a href="#" class="sidebar-link">
+                    <span class="sidebar-icon">▤</span>
+                    POS / Sales
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <span class="sidebar-icon">▥</span>
+                    Inventory
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <span class="sidebar-icon">R</span>
+                    Expenses
+                </a>
+
+            </div>
+
+
+            <!-- REPORTS -->
+
+            <div class="sidebar-section">
+
+                <div class="sidebar-section-title">
+                    Reports
+                </div>
+
+                <a href="#" class="sidebar-link">
+                    <span class="sidebar-icon">▥</span>
+                    Reports
+                </a>
+
+            </div>
+
+
+            <!-- SYSTEM -->
+
+            <div class="sidebar-section">
+
+                <div class="sidebar-section-title">
+                    System
+                </div>
+
+                <a href="#" class="sidebar-link">
+                    <span class="sidebar-icon">⚙</span>
+                    Settings
+                </a>
+
+            </div>
+
+
+            <hr class="sidebar-divider">
+
+
+            <a
+                href="{% url 'logout' %}"
+                class="sidebar-link"
+            >
+                <span class="sidebar-icon">↪</span>
+                Logout
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-user">
+
+            <div class="sidebar-user-name">
+                {{ request.user.get_full_name|default:request.user.username }}
+            </div>
+
+            <div class="sidebar-user-role">
+
+                {% if membership %}
+                    {{ membership.get_role_display }}
+                {% else %}
+                    Platform User
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <div class="app-main">
+
+        <header class="app-topbar">
+
+            <div>
+
+                {% if business %}
+
+                    <span class="topbar-business">
+                        {{ business.name }}
+                    </span>
+
+                {% else %}
+
+                    <span class="topbar-business">
+                        SalonSaaS
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="d-flex align-items-center gap-2">
+
+                <!-- STAFF NOTIFICATIONS -->
+
+                <a
+                    href="{% url 'notifications:list' %}"
+                    class="btn btn-outline-dark btn-sm position-relative"
+                    title="Notifications"
+                    aria-label="Notifications"
+                >
+
+                    🔔
+
+                    {% if unread_notification_count > 0 %}
+
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            style="font-size: 0.65rem;"
+                        >
+                            {{ unread_notification_count }}
+
+                            <span class="visually-hidden">
+                                unread notifications
+                            </span>
+
+                        </span>
+
+                    {% endif %}
+
+                </a>
+
+
+                <span class="topbar-user d-none d-md-inline">
+
+                    {% if request.user.get_full_name %}
+                        {{ request.user.get_full_name }}
+                    {% else %}
+                        {{ request.user.username }}
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+        </header>
+
+
+        {% if messages %}
+
+            <div class="px-4 pt-4">
+
+                {% for message in messages %}
+
+                    <div
+                        class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
+                        role="alert"
+                    >
+
+                        {{ message }}
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                        ></button>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+{% elif "/customer/" in request.path %}
+
+<!-- =========================================================
+     CUSTOMER PORTAL
+========================================================= -->
+
+<nav class="navbar navbar-dark customer-navbar">
+
+    <div class="container">
+
+        <a
+            class="navbar-brand"
+            href="{% url 'customer_dashboard' %}"
+        >
+
+            {% if business %}
+                {{ business.name }}
+            {% else %}
+                SalonSaaS
+            {% endif %}
+
+        </a>
+
+
+        {% if request.user.is_authenticated %}
+
+            <div class="d-flex align-items-center">
+
+                {% if customer %}
+
+                    <span class="text-white me-3 d-none d-md-inline">
+
+                        {% if customer.full_name %}
+                            {{ customer.full_name }}
+                        {% else %}
+                            {{ customer.first_name }}
+                        {% endif %}
+
+                    </span>
+
+                {% endif %}
+
+
+                <a
+                    href="{% url 'customer_dashboard' %}"
+                    class="btn btn-outline-light btn-sm me-2"
+                >
+                    Dashboard
+                </a>
+
+
+                <!-- CUSTOMER NOTIFICATIONS -->
+
+                <a
+                    href="{% url 'notifications:list' %}"
+                    class="btn btn-outline-light btn-sm me-2 position-relative"
+                    title="Notifications"
+                    aria-label="Notifications"
+                >
+
+                    🔔
+
+                    {% if unread_notification_count > 0 %}
+
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            style="font-size: 0.65rem;"
+                        >
+                            {{ unread_notification_count }}
+
+                            <span class="visually-hidden">
+                                unread notifications
+                            </span>
+
+                        </span>
+
+                    {% endif %}
+
+                </a>
+
+
+                {% if customer %}
+
+                    <a
+                        href="{% url 'customer_profile' %}"
+                        class="btn btn-outline-light btn-sm me-2"
+                    >
+                        Profile
+                    </a>
+
+                {% endif %}
+
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="btn btn-outline-light btn-sm"
+                >
+                    Logout
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+
+{% if messages %}
+
+    <div class="container pt-4">
+
+        {% for message in messages %}
+
+            <div
+                class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
+                role="alert"
+            >
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+
+{% else %}
+
+<!-- =========================================================
+     PUBLIC / AUTHENTICATION
+========================================================= -->
+
+{% if messages %}
+
+    <div class="container pt-4">
+
+        {% for message in messages %}
+
+            <div
+                class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
+                role="alert"
+            >
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+
+{% endif %}
+
+
+<!-- =========================================================
+     SINGLE CONTENT BLOCK
+     THIS MUST APPEAR ONLY ONCE
+========================================================= -->
+
+{% block content %}{% endblock %}
+
+
+<!-- =========================================================
+     STAFF FOOTER
+========================================================= -->
+
+{% if request.user.is_authenticated and "/customer/" not in request.path %}
+
+        <footer class="app-footer">
+
+            <div class="footer-inner">
+
+                <div>
+
+                    <span class="footer-brand">
+                        SalonSaaS
+                    </span>
+
+                    <span class="ms-2">
+                        Salon Management System
+                    </span>
+
+                </div>
+
+                <div>
+                    © {% now "Y" %} SalonSaaS. All rights reserved.
+                </div>
+
+            </div>
+
+        </footer>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     CUSTOMER FOOTER
+========================================================= -->
+
+{% elif "/customer/" in request.path %}
+
+    <footer class="app-footer">
+
+        <div class="footer-inner">
+
+            <div>
+
+                <span class="footer-brand">
+                    SalonSaaS
+                </span>
+
+                <span class="ms-2">
+                    Customer Portal
+                </span>
+
+            </div>
+
+            <div>
+                © {% now "Y" %} SalonSaaS. All rights reserved.
+            </div>
+
+        </div>
+
+    </footer>
+
+{% endif %}
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+
+</html>

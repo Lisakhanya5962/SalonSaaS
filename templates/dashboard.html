@@ -1,0 +1,671 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | {{ business.name|default:"SalonSaaS" }}
+{% endblock %}
+
+{% block content %}
+
+<!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+
+
+
+
+        <!-- ==========================================
+             TOP BAR
+        =========================================== -->
+
+        <div
+            class="d-flex flex-wrap justify-content-between align-items-center mb-4"
+        >
+
+            <div>
+
+                <h2 class="fw-bold mb-1">
+                    Dashboard
+                </h2>
+
+
+                <p class="text-muted mb-0">
+
+                    Welcome back,
+                    {{ request.user.first_name|default:request.user.username }}!
+
+                </p>
+
+
+                {% if business %}
+
+                    <p class="mb-0 mt-1">
+
+                        <strong>
+                            {{ business.name }}
+                        </strong>
+
+                        <span class="text-muted">
+
+                            Â·
+                            {{ business.get_business_type_display }}
+
+                        </span>
+
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="text-end mt-3 mt-md-0">
+
+                {% if membership %}
+
+                    <span class="badge bg-dark">
+
+                        {{ membership.get_role_display }}
+
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-dark">
+                        Platform User
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             MESSAGES
+        =========================================== -->
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div
+                    class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                    role="alert"
+                >
+
+                    {{ message }}
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                    ></button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+
+        <!-- ==========================================
+             MAIN STAT CARDS
+        =========================================== -->
+
+        <div class="row g-4 mb-4">
+
+
+            <!-- TODAY'S REVENUE -->
+
+            <div class="col-sm-6 col-xl-3">
+
+                <div class="card stat-card shadow-sm">
+
+                    <div class="card-body">
+
+                        <p class="text-muted mb-1 stat-label">
+                            Today's Revenue
+                        </p>
+
+                        <div class="stat-value">
+
+                            R{{ today_revenue|floatformat:2 }}
+
+                        </div>
+
+                        <small class="text-muted">
+                            From today's appointments
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- APPOINTMENTS -->
+
+            <div class="col-sm-6 col-xl-3">
+
+                <div class="card stat-card shadow-sm">
+
+                    <div class="card-body">
+
+                        <p class="text-muted mb-1 stat-label">
+                            Today's Appointments
+                        </p>
+
+                        <div class="stat-value">
+
+                            {{ today_appointments_count }}
+
+                        </div>
+
+                        <small class="text-muted">
+                            Scheduled for today
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CUSTOMERS -->
+
+            <div class="col-sm-6 col-xl-3">
+
+                <div class="card stat-card shadow-sm">
+
+                    <div class="card-body">
+
+                        <p class="text-muted mb-1 stat-label">
+                            Customers
+                        </p>
+
+                        <div class="stat-value">
+
+                            {{ customer_count }}
+
+                        </div>
+
+                        <small class="text-muted">
+                            Active customers
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SERVICES -->
+
+            <div class="col-sm-6 col-xl-3">
+
+                <div class="card stat-card shadow-sm">
+
+                    <div class="card-body">
+
+                        <p class="text-muted mb-1 stat-label">
+                            Services
+                        </p>
+
+                        <div class="stat-value">
+
+                            {{ service_count }}
+
+                        </div>
+
+                        <small class="text-muted">
+                            Active services
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             APPOINTMENT STATUS
+        =========================================== -->
+
+        <div class="row g-4 mb-4">
+
+
+            <div class="col-6 col-md-3">
+
+                <div class="card status-card shadow-sm">
+
+                    <div class="card-body">
+
+                        <div class="text-muted small">
+                            Pending
+                        </div>
+
+                        <h4 class="fw-bold mb-0">
+                            {{ pending_count }}
+                        </h4>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-md-3">
+
+                <div class="card status-card shadow-sm">
+
+                    <div class="card-body">
+
+                        <div class="text-muted small">
+                            Confirmed
+                        </div>
+
+                        <h4 class="fw-bold mb-0">
+                            {{ confirmed_count }}
+                        </h4>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-md-3">
+
+                <div class="card status-card shadow-sm">
+
+                    <div class="card-body">
+
+                        <div class="text-muted small">
+                            Completed
+                        </div>
+
+                        <h4 class="fw-bold mb-0">
+                            {{ completed_count }}
+                        </h4>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-md-3">
+
+                <div class="card status-card shadow-sm">
+
+                    <div class="card-body">
+
+                        <div class="text-muted small">
+                            Cancelled
+                        </div>
+
+                        <h4 class="fw-bold mb-0">
+                            {{ cancelled_count }}
+                        </h4>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             CONTENT
+        =========================================== -->
+
+        <div class="row g-4">
+
+
+            <!-- UPCOMING APPOINTMENTS -->
+
+            <div class="col-lg-8">
+
+                <div class="card dashboard-card shadow-sm">
+
+                    <div class="card-body">
+
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-3"
+                        >
+
+                            <h5 class="fw-bold mb-0">
+                                Upcoming Appointments
+                            </h5>
+
+
+                            <a
+                                href="{% url 'appointment_list' %}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                View All
+                            </a>
+
+                        </div>
+
+
+                        {% if upcoming_appointments %}
+
+                            {% for appointment in upcoming_appointments %}
+
+                                <div class="appointment-row">
+
+                                    <div
+                                        class="row align-items-center"
+                                    >
+
+
+                                        <!-- DATE/TIME -->
+
+                                        <div class="col-md-3">
+
+                                            <div class="appointment-time">
+
+                                                {{ appointment.appointment_date|date:"d M Y" }}
+
+                                            </div>
+
+                                            <div class="small-muted">
+
+                                                {{ appointment.start_time|time:"H:i" }}
+
+                                                -
+
+                                                {{ appointment.end_time|time:"H:i" }}
+
+                                            </div>
+
+                                        </div>
+
+
+
+                                        <!-- CUSTOMER -->
+
+                                        <div class="col-md-3 mt-2 mt-md-0">
+
+                                            <div class="appointment-customer">
+
+                                                {{ appointment.customer.full_name }}
+
+                                            </div>
+
+                                            <div class="small-muted">
+
+                                                {{ appointment.customer.phone }}
+
+                                            </div>
+
+                                        </div>
+
+
+
+                                        <!-- SERVICE -->
+
+                                        <div class="col-md-3 mt-2 mt-md-0">
+
+                                            <div>
+
+                                                {{ appointment.service.name }}
+
+                                            </div>
+
+                                            <div class="small-muted">
+
+                                                R{{ appointment.price|floatformat:2 }}
+
+                                            </div>
+
+                                        </div>
+
+
+
+                                        <!-- STATUS -->
+
+                                        <div class="col-md-3 mt-2 mt-md-0 text-md-end">
+
+
+                                            {% if appointment.status == "PENDING" %}
+
+                                                <span class="badge bg-warning text-dark">
+                                                    Pending
+                                                </span>
+
+
+                                            {% elif appointment.status == "CONFIRMED" %}
+
+                                                <span class="badge bg-primary">
+                                                    Confirmed
+                                                </span>
+
+
+                                            {% elif appointment.status == "COMPLETED" %}
+
+                                                <span class="badge bg-success">
+                                                    Completed
+                                                </span>
+
+
+                                            {% elif appointment.status == "CANCELLED" %}
+
+                                                <span class="badge bg-danger">
+                                                    Cancelled
+                                                </span>
+
+
+                                            {% elif appointment.status == "NO_SHOW" %}
+
+                                                <span class="badge bg-secondary">
+                                                    No Show
+                                                </span>
+
+
+                                            {% endif %}
+
+
+                                            <div class="mt-2">
+
+                                                <a
+                                                    href="{% url 'appointment_detail' appointment.id %}"
+                                                    class="btn btn-sm btn-outline-secondary"
+                                                >
+                                                    View
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+
+                        {% else %}
+
+                            <div class="text-center py-5">
+
+                                <h6 class="fw-bold">
+                                    No upcoming appointments
+                                </h6>
+
+                                <p class="text-muted mb-3">
+                                    There are no upcoming appointments at the moment.
+                                </p>
+
+                                <a
+                                    href="{% url 'appointment_create' %}"
+                                    class="btn btn-primary"
+                                >
+                                    + Add Appointment
+                                </a>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="col-lg-4">
+
+                <div class="card dashboard-card shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="fw-bold mb-3">
+                            Quick Actions
+                        </h5>
+
+
+                        <div class="d-grid gap-2">
+
+
+                            <a
+                                href="{% url 'appointment_create' %}"
+                                class="btn btn-primary quick-action"
+                            >
+                                + Book Appointment
+                            </a>
+
+
+                            <a
+                                href="{% url 'appointment_calendar' %}"
+                                class="btn btn-outline-dark quick-action"
+                            >
+                                View Calendar
+                            </a>
+
+
+                            <a
+                                href="{% url 'appointment_list' %}"
+                                class="btn btn-outline-secondary quick-action"
+                            >
+                                Manage Appointments
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BUSINESS INFORMATION -->
+
+                {% if business %}
+
+                    <div class="card dashboard-card shadow-sm mt-4">
+
+                        <div class="card-body">
+
+                            <h5 class="fw-bold mb-3">
+                                Business Information
+                            </h5>
+
+
+                            <div class="mb-2">
+
+                                <small class="text-muted">
+                                    Business
+                                </small>
+
+                                <div class="fw-semibold">
+                                    {{ business.name }}
+                                </div>
+
+                            </div>
+
+
+                            <div class="mb-2">
+
+                                <small class="text-muted">
+                                    Type
+                                </small>
+
+                                <div class="fw-semibold">
+                                    {{ business.get_business_type_display }}
+                                </div>
+
+                            </div>
+
+
+                            {% if business.phone %}
+
+                                <div class="mb-2">
+
+                                    <small class="text-muted">
+                                        Phone
+                                    </small>
+
+                                    <div>
+                                        {{ business.phone }}
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if business.email %}
+
+                                <div>
+
+                                    <small class="text-muted">
+                                        Email
+                                    </small>
+
+                                    <div>
+                                        {{ business.email }}
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+{% endblock %}

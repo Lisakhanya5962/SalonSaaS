@@ -1,0 +1,635 @@
+﻿{% extends "base.html" %}
+{% load calendar_tags %}
+
+{% block title %}
+Calendar | {{ business.name }}
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    /* =====================================================
+       CALENDAR PAGE
+    ===================================================== */
+
+    .calendar-page {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .calendar-header {
+        background: white;
+        border: 0;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .calendar-header h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+
+    /* =====================================================
+       FILTER CARD
+    ===================================================== */
+
+    .filter-card {
+        border: 0;
+        border-radius: 14px;
+    }
+
+    .filter-card .form-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .filter-card .form-control,
+    .filter-card .form-select {
+        min-height: 44px;
+        border-radius: 9px;
+    }
+
+
+    /* =====================================================
+       CALENDAR CARD
+    ===================================================== */
+
+    .calendar-card {
+        border: 0;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .calendar-card .card-body {
+        padding: 0;
+    }
+
+
+    /* =====================================================
+       MONTH NAVIGATION
+    ===================================================== */
+
+    .calendar-navigation {
+        padding: 20px 24px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #ffffff;
+    }
+
+    .calendar-navigation h3 {
+        font-size: 1.35rem;
+    }
+
+    .calendar-navigation .btn {
+        border-radius: 8px;
+        min-width: 110px;
+    }
+
+
+    /* =====================================================
+       CALENDAR WRAPPER
+    ===================================================== */
+
+    .calendar-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+
+    /* =====================================================
+       CALENDAR TABLE
+    ===================================================== */
+
+    .calendar-table {
+        width: 100%;
+        min-width: 950px;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    .calendar-table thead th {
+        background: #111827;
+        color: white;
+        text-align: center;
+        padding: 13px 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: 1px solid #374151;
+    }
+
+    .calendar-table tbody td {
+        height: 145px;
+        vertical-align: top;
+        padding: 8px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        position: relative;
+    }
+
+    .calendar-table tbody td.empty {
+        background: #f9fafb;
+    }
+
+
+    /* =====================================================
+       DAY NUMBER
+    ===================================================== */
+
+    .day-number {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+        border-radius: 50%;
+    }
+
+
+    /* =====================================================
+       TODAY
+    ===================================================== */
+
+    .calendar-table td.today {
+        background: #eff6ff;
+    }
+
+    .calendar-table td.today .day-number {
+        background: #2563eb;
+        color: white;
+    }
+
+
+    /* =====================================================
+       APPOINTMENTS
+    ===================================================== */
+
+    .appointment {
+        display: block;
+        text-decoration: none;
+        padding: 7px 8px;
+        margin-bottom: 5px;
+        border-radius: 7px;
+        color: #111827;
+        border-left: 4px solid;
+        transition: transform 0.15s ease,
+                    box-shadow 0.15s ease;
+    }
+
+    .appointment:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+        color: #111827;
+    }
+
+
+    /* =====================================================
+       APPOINTMENT STATUS
+    ===================================================== */
+
+    .appointment.pending {
+        background: #fff7ed;
+        border-left-color: #f59e0b;
+    }
+
+    .appointment.confirmed {
+        background: #eff6ff;
+        border-left-color: #2563eb;
+    }
+
+    .appointment.completed {
+        background: #f0fdf4;
+        border-left-color: #16a34a;
+    }
+
+    .appointment.cancelled {
+        background: #fef2f2;
+        border-left-color: #dc2626;
+    }
+
+    .appointment.no-show {
+        background: #f3f4f6;
+        border-left-color: #6b7280;
+    }
+
+
+    /* =====================================================
+       APPOINTMENT TEXT
+    ===================================================== */
+
+    .appointment-time {
+        font-size: 0.72rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .appointment-customer {
+        font-size: 0.78rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .appointment-service {
+        font-size: 0.7rem;
+        color: #6b7280;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 767px) {
+
+        .calendar-header {
+            padding: 18px;
+        }
+
+        .calendar-header h2 {
+            font-size: 1.4rem;
+        }
+
+        .calendar-navigation {
+            padding: 16px;
+        }
+
+        .calendar-navigation h3 {
+            font-size: 1.1rem;
+        }
+
+        .calendar-navigation .btn {
+            min-width: auto;
+        }
+
+        .calendar-table {
+            min-width: 850px;
+        }
+
+        .calendar-table tbody td {
+            height: 120px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="calendar-page">
+
+
+    <!-- =================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <div class="calendar-header mb-4">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+            <div>
+
+                <h2>
+                    Appointment Calendar
+                </h2>
+
+                <p class="text-muted mb-0">
+                    {{ business.name }}
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'appointment_create' %}"
+                class="btn btn-primary mt-3 mt-md-0"
+            >
+                + Book Appointment
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         FILTERS
+    ================================================== -->
+
+    <div class="card filter-card shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <form method="get">
+
+                <div class="row g-3 align-items-end">
+
+
+                    <!-- SEARCH -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Search
+                        </label>
+
+                        <input
+                            type="text"
+                            name="q"
+                            value="{{ search_query }}"
+                            class="form-control"
+                            placeholder="Customer, service or staff..."
+                        >
+
+                    </div>
+
+
+                    <!-- STAFF -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Staff
+                        </label>
+
+                        <select
+                            name="staff"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Staff
+                            </option>
+
+                            {% for member in staff_members %}
+
+                                <option
+                                    value="{{ member.user.id }}"
+                                    {% if selected_staff == member.user.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}
+                                >
+
+                                    {% if member.user.get_full_name %}
+                                        {{ member.user.get_full_name }}
+                                    {% else %}
+                                        {{ member.user.username }}
+                                    {% endif %}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Status
+                        </label>
+
+                        <select
+                            name="status"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Statuses
+                            </option>
+
+                            {% for status_value, status_label in statuses %}
+
+                                <option
+                                    value="{{ status_value }}"
+                                    {% if selected_status == status_value %}
+                                        selected
+                                    {% endif %}
+                                >
+
+                                    {{ status_label }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FILTER BUTTON -->
+
+                    <div class="col-md-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-dark w-100"
+                        >
+                            Filter
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         CALENDAR
+    ================================================== -->
+
+    <div class="card calendar-card shadow-sm">
+
+        <!-- MONTH NAVIGATION -->
+
+        <div class="calendar-navigation">
+
+            <div class="d-flex justify-content-between align-items-center gap-3">
+
+
+                <!-- PREVIOUS -->
+
+                <a
+                    href="?month={{ previous_month }}&year={{ previous_year }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if selected_staff %}&staff={{ selected_staff }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+                    class="btn btn-outline-secondary"
+                >
+                    &larr; Previous
+                </a>
+
+
+                <!-- MONTH -->
+
+                <div class="text-center">
+
+                    <h3 class="fw-bold mb-0">
+                        {{ month_name }} {{ year }}
+                    </h3>
+
+                    {% if month == today_month and year == today_year %}
+
+                        <small class="text-primary fw-semibold">
+                            Current Month
+                        </small>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- NEXT -->
+
+                <a
+                    href="?month={{ next_month }}&year={{ next_year }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if selected_staff %}&staff={{ selected_staff }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Next &rarr;
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- CALENDAR GRID -->
+
+        <div class="calendar-wrapper">
+
+            <table class="table calendar-table mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Saturday</th>
+                        <th>Sunday</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for week in calendar_weeks %}
+
+                    <tr>
+
+                    {% for day in week %}
+
+                        {% if day == 0 %}
+
+                            <td class="empty"></td>
+
+                        {% else %}
+
+                            <td
+                                {% if day == today_day and month == today_month and year == today_year %}
+                                    class="today"
+                                {% endif %}
+                            >
+
+                                <div class="day-number">
+                                    {{ day }}
+                                </div>
+
+
+                                {% with day_appointments=appointments_by_day|get_item:day %}
+
+                                    {% if day_appointments %}
+
+                                        {% for appointment in day_appointments %}
+
+                                            <a
+                                                href="{% url 'appointment_detail' appointment.id %}"
+                                                class="appointment
+                                                {% if appointment.status == 'PENDING' %}
+                                                    pending
+                                                {% elif appointment.status == 'CONFIRMED' %}
+                                                    confirmed
+                                                {% elif appointment.status == 'COMPLETED' %}
+                                                    completed
+                                                {% elif appointment.status == 'CANCELLED' %}
+                                                    cancelled
+                                                {% elif appointment.status == 'NO_SHOW' %}
+                                                    no-show
+                                                {% endif %}"
+                                            >
+
+                                                <div class="appointment-time">
+
+                                                    {{ appointment.start_time|time:"H:i" }}
+                                                    -
+                                                    {{ appointment.end_time|time:"H:i" }}
+
+                                                </div>
+
+
+                                                <div class="appointment-customer">
+
+                                                    {{ appointment.customer.full_name }}
+
+                                                </div>
+
+
+                                                <div class="appointment-service">
+
+                                                    {{ appointment.service.name }}
+
+                                                </div>
+
+                                            </a>
+
+                                        {% endfor %}
+
+                                    {% endif %}
+
+                                {% endwith %}
+
+                            </td>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

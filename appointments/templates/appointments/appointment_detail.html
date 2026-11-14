@@ -1,0 +1,608 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Appointment Details | {{ business.name }}
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            background-color: #f5f7fb;
+        }
+
+        .details-card {
+            border: none;
+            border-radius: 14px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6c757d;
+        }
+
+        .info-row {
+            padding: 12px 0;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container py-5">
+
+    <!-- Page Header -->
+
+    <div class="mb-4">
+
+        <a
+            href="{% url 'appointment_list' %}"
+            class="text-decoration-none"
+        >
+            ← Back to Appointments
+        </a>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+
+            <div>
+
+                <h1 class="h3 mb-1">
+                    Appointment Details
+                </h1>
+
+                <p class="text-muted mb-0">
+                    {{ business.name }}
+                </p>
+
+            </div>
+
+            <div class="d-flex gap-2">
+
+                <a
+                    href="{% url 'appointment_edit' appointment.id %}"
+                    class="btn btn-outline-primary"
+                >
+                    Edit Appointment
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Messages -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }}">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <div class="row g-4">
+
+
+        <!-- Main Appointment Information -->
+
+        <div class="col-lg-8">
+
+            <div class="card details-card shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+
+                        <div>
+
+                            <div class="section-title">
+                                Appointment
+                            </div>
+
+                            <h2 class="h4 mb-0 mt-1">
+
+                                {{ appointment.service.name }}
+
+                            </h2>
+
+                        </div>
+
+
+                        <span class="badge bg-primary fs-6">
+
+                            {{ appointment.get_status_display }}
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- Date -->
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Date
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ appointment.appointment_date|date:"l, d F Y" }}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Time -->
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Time
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ appointment.start_time|time:"H:i" }}
+
+                            –
+
+                            {{ appointment.end_time|time:"H:i" }}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Duration -->
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Duration
+                        </div>
+
+                        <div class="info-value">
+
+                            {% widthratio appointment.end_time.hour 1 60 %}
+
+                            minutes
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Price -->
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Price
+                        </div>
+
+                        <div class="info-value">
+
+                            R{{ appointment.price }}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Notes -->
+
+                    <div class="mt-4">
+
+                        <div class="section-title mb-2">
+                            Notes
+                        </div>
+
+                        {% if appointment.notes %}
+
+                            <div class="p-3 bg-light rounded">
+
+                                {{ appointment.notes|linebreaksbr }}
+
+                            </div>
+
+                        {% else %}
+
+                            <p class="text-muted mb-0">
+                                No notes were added.
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Status Management -->
+
+            <div class="card details-card shadow-sm mt-4">
+
+                <div class="card-body p-4">
+
+                    <div class="section-title mb-3">
+                        Change Appointment Status
+                    </div>
+
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        {% for value, label in appointment.Status.choices %}
+
+                            {% if appointment.status != value %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'appointment_status' appointment.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="status"
+                                        value="{{ value }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-outline-secondary"
+                                    >
+
+                                        Mark as {{ label }}
+
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Cancel Appointment -->
+
+            {% if appointment.status != "CANCELLED" %}
+
+                <div class="card details-card shadow-sm mt-4">
+
+                    <div class="card-body p-4">
+
+                        <div class="section-title mb-2">
+                            Cancel Appointment
+                        </div>
+
+                        <p class="text-muted">
+
+                            Cancelling an appointment will mark it
+                            as cancelled. The appointment will remain
+                            in the system for record keeping.
+
+                        </p>
+
+                        <form
+                            method="post"
+                            action="{% url 'appointment_cancel' appointment.id %}"
+                            onsubmit="return confirm('Are you sure you want to cancel this appointment?');"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-danger"
+                            >
+
+                                Cancel Appointment
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Customer / Staff -->
+
+        <div class="col-lg-4">
+
+
+            <!-- Customer -->
+
+            <div class="card details-card shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <div class="section-title mb-3">
+                        Customer
+                    </div>
+
+                    <h3 class="h5">
+
+                        {{ appointment.customer.full_name }}
+
+                    </h3>
+
+
+                    {% if appointment.customer.phone %}
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Phone
+                            </div>
+
+                            <div class="info-value">
+
+                                {{ appointment.customer.phone }}
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if appointment.customer.email %}
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Email
+                            </div>
+
+                            <div class="info-value">
+
+                                {{ appointment.customer.email }}
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if appointment.customer.gender %}
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Gender
+                            </div>
+
+                            <div class="info-value">
+
+                                {{ appointment.customer.get_gender_display }}
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Service -->
+
+            <div class="card details-card shadow-sm mt-4">
+
+                <div class="card-body p-4">
+
+                    <div class="section-title mb-3">
+                        Service
+                    </div>
+
+                    <h3 class="h5">
+
+                        {{ appointment.service.name }}
+
+                    </h3>
+
+                    {% if appointment.service.description %}
+
+                        <p class="text-muted">
+
+                            {{ appointment.service.description }}
+
+                        </p>
+
+                    {% endif %}
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Service Price
+                        </div>
+
+                        <div class="info-value">
+
+                            R{{ appointment.service.price }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Service Duration
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ appointment.service.duration_display }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Staff -->
+
+            <div class="card details-card shadow-sm mt-4">
+
+                <div class="card-body p-4">
+
+                    <div class="section-title mb-3">
+                        Staff Member
+                    </div>
+
+                    <h3 class="h5">
+
+                        {{ appointment.staff.get_full_name|default:appointment.staff.username }}
+
+                    </h3>
+
+                    <p class="text-muted mb-0">
+
+                        @{{ appointment.staff.username }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Created Information -->
+
+            <div class="card details-card shadow-sm mt-4">
+
+                <div class="card-body p-4">
+
+                    <div class="section-title mb-3">
+                        Record Information
+                    </div>
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Created
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ appointment.created_at|date:"d M Y H:i" }}
+
+                        </div>
+
+                    </div>
+
+
+                    {% if appointment.created_by %}
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Created By
+                            </div>
+
+                            <div class="info-value">
+
+                                {{ appointment.created_by.get_full_name|default:appointment.created_by.username }}
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Last Updated
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ appointment.updated_at|date:"d M Y H:i" }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

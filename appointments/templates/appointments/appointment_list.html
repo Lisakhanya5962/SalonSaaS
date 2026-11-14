@@ -1,0 +1,509 @@
+﻿{% extends "base.html" %}
+
+{% block title %}
+Appointments | {{ business.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="h3 mb-1">
+                Appointments
+            </h1>
+
+            <p class="text-muted mb-0">
+                Manage appointments for
+                <strong>{{ business.name }}</strong>
+            </p>
+        </div>
+
+        <div class="mt-3 mt-md-0">
+            <a
+                href="{% url 'appointment_create' %}"
+                class="btn btn-primary"
+            >
+                + New Appointment
+            </a>
+        </div>
+
+    </div>
+
+
+    <!-- MESSAGES -->
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div
+                class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
+                role="alert"
+            >
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- SEARCH AND FILTERS -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <form
+                method="get"
+                action="{% url 'appointment_list' %}"
+            >
+
+                <div class="row g-3">
+
+                    <!-- SEARCH -->
+                    <div class="col-md-4">
+
+                        <label
+                            for="search"
+                            class="form-label fw-semibold"
+                        >
+                            Search
+                        </label>
+
+                        <input
+                            type="text"
+                            name="q"
+                            id="search"
+                            class="form-control"
+                            placeholder="Customer, service or staff..."
+                            value="{{ search_query }}"
+                        >
+
+                    </div>
+
+
+                    <!-- DATE -->
+                    <div class="col-md-3">
+
+                        <label
+                            for="date"
+                            class="form-label fw-semibold"
+                        >
+                            Date
+                        </label>
+
+                        <input
+                            type="date"
+                            name="date"
+                            id="date"
+                            class="form-control"
+                            value="{{ selected_date }}"
+                        >
+
+                    </div>
+
+
+                    <!-- STATUS -->
+                    <div class="col-md-3">
+
+                        <label
+                            for="status"
+                            class="form-label fw-semibold"
+                        >
+                            Status
+                        </label>
+
+                        <select
+                            name="status"
+                            id="status"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Statuses
+                            </option>
+
+                            {% for value, label in statuses %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if selected_status == value %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FILTER -->
+                    <div class="col-md-2 d-flex align-items-end">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+                            Filter
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            <!-- CLEAR FILTERS -->
+            {% if search_query or selected_date or selected_status %}
+
+                <div class="mt-3">
+
+                    <a
+                        href="{% url 'appointment_list' %}"
+                        class="btn btn-sm btn-outline-secondary"
+                    >
+                        Clear Filters
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- APPOINTMENT LIST -->
+    <div class="card shadow-sm">
+
+        <div class="card-body p-0">
+
+            {% if appointments %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="px-3">
+                                    Date
+                                </th>
+
+                                <th>
+                                    Time
+                                </th>
+
+                                <th>
+                                    Customer
+                                </th>
+
+                                <th>
+                                    Service
+                                </th>
+
+                                <th>
+                                    Staff
+                                </th>
+
+                                <th>
+                                    Price
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th class="text-end px-3">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for appointment in appointments %}
+
+                                <tr>
+
+                                    <!-- DATE -->
+                                    <td class="px-3">
+
+                                        <strong>
+                                            {{ appointment.appointment_date|date:"d M Y" }}
+                                        </strong>
+
+                                        <br>
+
+                                        <small class="text-muted">
+                                            {{ appointment.appointment_date|date:"l" }}
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- TIME -->
+                                    <td>
+
+                                        <strong>
+                                            {{ appointment.start_time|time:"H:i" }}
+                                        </strong>
+
+                                        <br>
+
+                                        <small class="text-muted">
+                                            {{ appointment.end_time|time:"H:i" }}
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- CUSTOMER -->
+                                    <td>
+
+                                        <strong>
+                                            {{ appointment.customer.full_name }}
+                                        </strong>
+
+                                        {% if appointment.customer.phone %}
+
+                                            <br>
+
+                                            <small class="text-muted">
+                                                {{ appointment.customer.phone }}
+                                            </small>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- SERVICE -->
+                                    <td>
+
+                                        <strong>
+                                            {{ appointment.service.name }}
+                                        </strong>
+
+                                        {% if appointment.service.duration_display %}
+
+                                            <br>
+
+                                            <small class="text-muted">
+                                                {{ appointment.service.duration_display }}
+                                            </small>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- STAFF -->
+                                    <td>
+
+                                        {% if appointment.staff.get_full_name %}
+
+                                            {{ appointment.staff.get_full_name }}
+
+                                        {% else %}
+
+                                            {{ appointment.staff.username }}
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- PRICE -->
+                                    <td>
+
+                                        <strong>
+                                            R{{ appointment.price|floatformat:2 }}
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+                                    <td>
+
+                                        {% if appointment.status == "PENDING" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                {{ appointment.get_status_display }}
+                                            </span>
+
+                                        {% elif appointment.status == "CONFIRMED" %}
+
+                                            <span class="badge bg-primary">
+                                                {{ appointment.get_status_display }}
+                                            </span>
+
+                                        {% elif appointment.status == "COMPLETED" %}
+
+                                            <span class="badge bg-success">
+                                                {{ appointment.get_status_display }}
+                                            </span>
+
+                                        {% elif appointment.status == "CANCELLED" %}
+
+                                            <span class="badge bg-danger">
+                                                {{ appointment.get_status_display }}
+                                            </span>
+
+                                        {% elif appointment.status == "NO_SHOW" %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ appointment.get_status_display }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ appointment.get_status_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ACTIONS -->
+                                    <td class="text-end px-3">
+
+                                        <div class="d-flex justify-content-end gap-1 flex-wrap">
+
+                                            <a
+                                                href="{% url 'appointment_detail' appointment.id %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                            >
+                                                View Details
+                                            </a>
+
+
+                                            <a
+                                                href="{% url 'appointment_edit' appointment.id %}"
+                                                class="btn btn-sm btn-outline-secondary"
+                                            >
+                                                Edit
+                                            </a>
+
+
+                                            {% if appointment.status != "COMPLETED" and appointment.status != "CANCELLED" %}
+
+                                                <a
+                                                    href="{% url 'appointment_detail' appointment.id %}"
+                                                    class="btn btn-sm btn-outline-success"
+                                                >
+                                                    Manage
+                                                </a>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- EMPTY STATE -->
+                <div class="text-center py-5 px-3">
+
+                    <div class="fs-1 mb-3">
+                        📅
+                    </div>
+
+                    <h4>
+                        No appointments found
+                    </h4>
+
+                    {% if search_query or selected_date or selected_status %}
+
+                        <p class="text-muted">
+                            No appointments match your current filters.
+                        </p>
+
+                        <a
+                            href="{% url 'appointment_list' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Clear Filters
+                        </a>
+
+                    {% else %}
+
+                        <p class="text-muted">
+                            You haven't created any appointments yet.
+                        </p>
+
+                        <a
+                            href="{% url 'appointment_create' %}"
+                            class="btn btn-primary"
+                        >
+                            Create First Appointment
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- APPOINTMENT COUNT -->
+    {% if appointments %}
+
+        <div class="mt-3 text-muted">
+
+            Showing
+
+            <strong>
+                {{ appointments|length }}
+            </strong>
+
+            appointment{{ appointments|length|pluralize }}.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
